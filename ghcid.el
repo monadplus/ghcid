@@ -20,6 +20,10 @@
 ;;; Code:
 
 (require 'term)
+(require 'compile)
+
+;; TODO
+;; - Always loads from buffer directory, it should load from the .cabal's directory.
 
 ;; Set ghcid-target to change the target
 (setq ghcid-target "")
@@ -107,7 +111,8 @@ exactly. See `ghcid-mode'."
     (setq-local default-directory dir)
 
     ;; Only now we can figure out the height to pass along to the ghcid process
-    (let ((height (- (window-body-size) 1)))
+    ;; (let ((height (- (window-body-size) 5)))
+    (let ((height (- (window-height) scroll-margin 3)))
 
       (term-mode)
       (term-line-mode)  ;; Allows easy navigation through the buffer

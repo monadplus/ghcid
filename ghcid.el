@@ -111,9 +111,10 @@ exactly. See `ghcid-mode'."
     ;; Only now we can figure out the height to pass along to the ghcid process
     ;; (let ((height (- (window-body-size) 5)))
     (let ((height (- (window-height) scroll-margin 4))
-          (ghcid-cmd (nth (- mode 1) '(ghcid-ghci-cmd ghcid-cabal-cmd ghcid-stack-cmd))))
+          (ghcid-cmd (nth (- mode 1) '(ghcid-ghci-cmd ghcid-cabal-cmd ghcid-stack-cmd)))
+          (ghcid-target (if (= mode 1) filename "")))
 
-      (setq-local ghcid-target (if (= mode 1) filename ""))
+      ;; (setq-local ghcid-target (if (= mode 1) filename ""))
       ;; TODO this doesn't work
       ;; (when (/= mode 1)
       ;;   (message "Target: ")
@@ -137,6 +138,7 @@ exactly. See `ghcid-mode'."
 (defun ghcid-kill ()
   (let* ((ghcid-buf (get-buffer (ghcid-buffer-name)))
          (ghcid-proc (get-buffer-process ghcid-buf)))
+    (delete-windows-on ghcid-buf)
     (when (processp ghcid-proc)
       (progn
         (set-process-query-on-exit-flag ghcid-proc nil)

@@ -21,9 +21,10 @@
 
 (require 'term)
 (require 'compile)
+(require 'haskell-mode) ; haskell-cabal-find-dir
 
 ;; TODO
-;; - Always loads from buffer directory, it should load from the .cabal's directory.
+;;  - Search for stack.yaml files
 
 (setq ghcid-process-name "ghcid")
 
@@ -106,7 +107,11 @@ exactly. See `ghcid-mode'."
   (with-selected-window (ghcid-get-buffer)
 
     (setq next-error-last-buffer (current-buffer))
-    (setq-local default-directory dir)
+    ;; https://github.com/haskell/haskell-mode/blob/4b72abe18ff7059d68e3a81c6daa13df2fdbd788/haskell-cabal.el#L298
+    (setq-local default-directory
+                (cond
+                 ((= mode 2) (haskell-cabal-find-dir))
+                 (t dir)))
 
     ;; Only now we can figure out the height to pass along to the ghcid process
     ;; (let ((height (- (window-body-size) 5)))
@@ -114,7 +119,6 @@ exactly. See `ghcid-mode'."
           (ghcid-cmd (nth (- mode 1) '(ghcid-ghci-cmd ghcid-cabal-cmd ghcid-stack-cmd)))
           (ghcid-target (if (= mode 1) filename "")))
 
-      ;; (setq-local ghcid-target (if (= mode 1) filename ""))
       ;; TODO this doesn't work
       ;; (when (/= mode 1)
       ;;   (message "Target: ")
